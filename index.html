@@ -1,0 +1,38 @@
+<html>
+<meta charset="UTF-8" />
+<title>ROBOTS</title>
+
+<script src="js/rtge.js"></script>
+<script src="js/robots.js"></script>
+
+<style>
+	#introtext {
+		position: absolute;
+		left: 0;
+		top: 0;
+		padding-top: 7%;
+		width: 100%;
+	}
+	#introtext p {
+		text-align: center;
+		color: white;
+		font-size: xx-large;
+	}
+	#introtext p span {
+		background-color: rgba(0, 0, 0, .5);
+	}
+	#view {
+		width:99vw;
+		height:99vh;
+	}
+</style>
+
+<body onload="robots.init()" style="margin:0; padding:0; background: black">
+<canvas id="view" width="960" height="540"></canvas>
+<div id="introtext" style="display: none">
+	<p><span>Une fois encore le monde à besoin de vous !</span></p>
+</div>
+
+<audio id="music" loop preload="auto" src="sound/music.mp3" style="visibility: hidden"></audio>
+</body>
+</html>
