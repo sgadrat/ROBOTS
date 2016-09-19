@@ -413,29 +413,6 @@ var rtge = {
 		}
 	},
 	
-	canvasMoveInteraction: function(pos) {
-		// Moving forbids clicking
-		rtge.canClick = false;
-
-		// Update interface elements state
-		for (var i = 0; i < rtge.graphicInterface.length; ++i) {
-			for (var j = 0; j < rtge.graphicInterface[i].length; ++j) {
-				var o = rtge.graphicInterface[i][j];
-				var isUnderCursor = rtge.interfaceIsAt(o, pos);
-				if (!isUnderCursor && o.state == 'over') {
-					o.state = 'rest';
-				}else if (isUnderCursor && o.state == 'rest') {
-					o.state = 'over';
-				}
-			}
-		}
-
-		// Callbacks
-		if (rtge.camera.mouseMove != null) {
-			rtge.camera.mouseMove(pos);
-		}
-	},
-
 	canvasMouseDown: function(evt) {
 		var pos = rtge.getCanvasPos({x:evt.clientX, y:evt.clientY});
 		rtge.canvasBeginInteraction(pos);
@@ -447,8 +424,6 @@ var rtge = {
 	},
 
 	canvasMouseMove: function(evt) {
-		var pos = rtge.getCanvasPos({x:evt.clientX, y:evt.clientY});
-		rtge.canvasMoveInteraction(pos);
 	},
 	
 	canvasTouchStart: function(evt) {
@@ -493,16 +468,6 @@ var rtge = {
 	
 	canvasTouchMove: function(evt) {
 		evt.preventDefault();
-		if (rtge.currentTouch != null) {
-			var touch = rtge.searchCurrentTouch(evt);
-			if (touch != null) {
-				var pos = rtge.getCanvasPos({
-					x: touch.clientX,
-					y: touch.clientY
-				});
-				rtge.canvasMoveInteraction(pos);
-			}
-		}
 	},
 	
 	canvasResize: function(evt) {
