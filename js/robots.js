@@ -139,10 +139,7 @@ var robots = {
 			document.getElementById('introtext').innerHTML = '<p><span>Trouvé !</span></p>';
 		}
 		if (robots.state.data.duration > 18000) {
-			rtge.removeObject(robots.state.data.target);
-			document.getElementById('introtext').style.display = 'none';
-			rtge.state.terrain = 'img/background_game.jpg';
-			robots.state = {tick: robots.gameTick, click: robots.gameClick, data: {hero: robots.state.data.hero, board: [0, 0, 0, 0, 0, 0, 0, 0, 0], markers: []}};
+			robots.beginGameState();
 		}
 	},
 
@@ -155,6 +152,17 @@ var robots = {
 		rtge.state.terrain = 'img/background.jpg';
 		robots.state = {tick: robots.introTick, click: null, data: {duration: 0, hero: null, target: null}};
 		document.getElementById('music').play();
+	},
+
+	beginGameState: function() {
+		while (rtge.state.objects.length > 0) {
+			rtge.removeObject(rtge.state.objects[0]);
+		}
+		rtge.addObject(new robots.Hero(753, 187));
+		document.getElementById('introtext').style.display = 'none';
+		rtge.state.terrain = 'img/background_game.jpg';
+		robots.state = {tick: robots.gameTick, click: robots.gameClick, data: {hero: new robots.Hero(753, 187), board: [0, 0, 0, 0, 0, 0, 0, 0, 0], markers: []}};
+		rtge.addObject(robots.state.data.hero);
 	},
 
 	gameTick: function(timeDiff) {
@@ -182,13 +190,13 @@ var robots = {
 		if (board_state == 1) {
 			document.getElementById('introtext').innerHTML = '<p><span>Félicitations !</span></p><p><span>Vous avez encore sauvé le monde, l\'humanité vous doit une fière chandelle.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.beginIntroState, data: null};
+			robots.state = {tick: null, click: robots.beginGameState, data: null};
 			return;
 		}
 		if (board_state == 3) {
 			document.getElementById('introtext').innerHTML = '<p><span>Vous avez limité la casse.</span></p><p><span>Nous ne savons pas s\'il faut vous remercier.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.beginIntroState, data: null};
+			robots.state = {tick: null, click: robots.beginGameState, data: null};
 			return;
 		}
 
@@ -224,13 +232,13 @@ var robots = {
 		if (board_state == 2) {
 			document.getElementById('introtext').innerHTML = '<p><span>La ville a été détruite !</span></p><p><span>Maintenant que les humains ont disparu, vous pouvez vivre libre.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.beginIntroState, data: null};
+			robots.state = {tick: null, click: robots.beginGameState, data: null};
 			return;
 		}
 		if (board_state == 3) {
 			document.getElementById('introtext').innerHTML = '<p><span>Vous avez limité la casse.</span></p><p><span>Nous ne savons pas s\'il faut vous remercier.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.beginIntroState, data: null};
+			robots.state = {tick: null, click: robots.beginGameState, data: null};
 			return;
 		}
 	},
