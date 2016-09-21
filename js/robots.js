@@ -30,12 +30,20 @@ var robots = {
 		animations['marker.cross'] = new rtge.Animation();
 		animations['marker.cross'].steps = ['img/cross.png'];
 		animations['marker.cross'].durations = [600000];
+		animations['logo'] = new rtge.Animation();
+		for (var i = 0; i < 9; ++i) {
+			var filename = 'img/logo_'+i+'.png';
+			graphics.push(filename);
+			animations['logo'].steps.push(filename);
+			animations['logo'].durations.push(300);
+		}
+		animations['logo'].durations[8] = 600000;
 		var camera = new rtge.Camera();
 
 		rtge.init(
 			'view',
 			{
-				'terrain': 'img/background.jpg',
+				'terrain': null,
 				'objects': []
 			},
 			animations,
@@ -48,8 +56,7 @@ var robots = {
 			camera
 		);
 
-		robots.state = {tick: robots.introTick, click: null, data: {duration: 0, hero: null, target: null}};
-		document.getElementById('music').play();
+		robots.state = {tick: robots.logoTick, click: null, data: {duration: 0, logo: null}};
 	},
 
 	globalTick: function(timeDiff) {
@@ -69,6 +76,17 @@ var robots = {
 			var internal_x = x * (internal_width / canvas_width);
 			var internal_y = y * (internal_height / canvas_height);
 			robots.state.click(internal_x, internal_y);
+		}
+	},
+
+	logoTick: function(timeDiff) {
+		robots.state.data.duration += timeDiff;
+		if (robots.state.data.logo === null) {
+			robots.state.data.logo = new robots.Logo();
+			rtge.addObject(robots.state.data.logo);
+		}
+		if (robots.state.data.duration > 6000) {
+			robots.beginIntroState();
 		}
 	},
 
@@ -128,14 +146,15 @@ var robots = {
 		}
 	},
 
-	reset: function() {
-		rtge.state.terrain = 'img/background.jpg';
+	beginIntroState: function() {
 		document.getElementById('introtext').innerHTML = '<p><span>Une fois encore le monde à besoin de vous !</span></p>';
 		document.getElementById('introtext').style.display = 'none';
 		while (rtge.state.objects.length > 0) {
 			rtge.removeObject(rtge.state.objects[0]);
 		}
+		rtge.state.terrain = 'img/background.jpg';
 		robots.state = {tick: robots.introTick, click: null, data: {duration: 0, hero: null, target: null}};
+		document.getElementById('music').play();
 	},
 
 	gameTick: function(timeDiff) {
@@ -163,13 +182,13 @@ var robots = {
 		if (board_state == 1) {
 			document.getElementById('introtext').innerHTML = '<p><span>Félicitations !</span></p><p><span>Vous avez encore sauvé le monde, l\'humanité vous doit une fière chandelle.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.reset, data: null};
+			robots.state = {tick: null, click: robots.beginIntroState, data: null};
 			return;
 		}
 		if (board_state == 3) {
 			document.getElementById('introtext').innerHTML = '<p><span>Vous avez limité la casse.</span></p><p><span>Nous ne savons pas s\'il faut vous remercier.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.reset, data: null};
+			robots.state = {tick: null, click: robots.beginIntroState, data: null};
 			return;
 		}
 
@@ -205,13 +224,13 @@ var robots = {
 		if (board_state == 2) {
 			document.getElementById('introtext').innerHTML = '<p><span>La ville a été détruite !</span></p><p><span>Maintenant que les humains ont disparu, vous pouvez vivre libre.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.reset, data: null};
+			robots.state = {tick: null, click: robots.beginIntroState, data: null};
 			return;
 		}
 		if (board_state == 3) {
 			document.getElementById('introtext').innerHTML = '<p><span>Vous avez limité la casse.</span></p><p><span>Nous ne savons pas s\'il faut vous remercier.</span></p>';
 			document.getElementById('introtext').style.display = '';
-			robots.state = {tick: null, click: robots.reset, data: null};
+			robots.state = {tick: null, click: robots.beginIntroState, data: null};
 			return;
 		}
 	},
@@ -297,5 +316,14 @@ var robots = {
 		this.anchorX = 40;
 		this.anchorY = 50;
 		this.animation = 'marker.cross';
+	},
+
+	Logo: function() {
+		rtge.DynObject.call(this);
+		this.animation = 'logo';
+		this.anchorX = 167;
+		this.anchorY = 117;
+		this.x = 960 / 2;
+		this.y = 540 / 2;
 	},
 };

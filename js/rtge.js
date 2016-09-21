@@ -199,7 +199,9 @@ var rtge = {
 		rtge.canvasCtx.fillRect(0, 0, rtge.canvas.width, rtge.canvas.height);
 
 		// Map
-		rtge.drawImage(rtge.state.terrain, -rtge.camera.x, -rtge.camera.y);
+        if (rtge.state.terrain !== null) {
+		    rtge.drawImage(rtge.state.terrain, -rtge.camera.x, -rtge.camera.y);
+        }
 
 		// Dynamic objects
 		var i;
