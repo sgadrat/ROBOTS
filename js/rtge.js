@@ -165,6 +165,7 @@ var rtge = {
 		window.addEventListener('resize', rtge.canvasResize, false);
 
 		// Start engine
+		rtge.lastUpdate = Date.now();
 		rtge.run();
 	},
 
