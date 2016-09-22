@@ -345,31 +345,6 @@ var rtge = {
 	},
 	
 	canvasActivate: function(pos) {
-		var i, o;
-
-		// Check if we clicked an interface element, in reverse Z order to get the one drawn on top
-		o = rtge.getInterfaceElem(pos);
-		if (o != null) {
-			if (o.click != null) {
-				var elemPos = rtge.interfaceElemPosition(o);
-				o.click(rtge.pxToRpx(pos.x - elemPos.x), rtge.pxToRpx(pos.y, elemPos.y));
-			}
-			return;
-		}
-
-		// Check if we clicked an object, in reverse order to get the one drawn on top
-		pos = rtge.canvasPosToWorldPos(pos);
-		for (i = rtge.state.objects.length - 1; i >= 0; --i) {
-			o = rtge.state.objects[i];
-			if (o.visible && rtge.objectIsAt(o, pos)) {
-				if (o.click != null) {
-					o.click();
-				}
-				return;
-			}
-		}
-
-		// We didn't click an object, callback for clicking the world
 		if (rtge.worldClick != null) {
 			rtge.worldClick(pos.x, pos.y);
 		}
