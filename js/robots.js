@@ -10,6 +10,7 @@ var robots = {
 			'img/target_red.png',
 			'img/nought.png',
 			'img/cross.png',
+			'img/speech.png',
 		];
 		var animations = {};
 		animations['hero.portrait'] = new rtge.Animation();
@@ -30,6 +31,9 @@ var robots = {
 		animations['marker.cross'] = new rtge.Animation();
 		animations['marker.cross'].steps = ['img/cross.png'];
 		animations['marker.cross'].durations = [600000];
+		animations['speech'] = new rtge.Animation();
+		animations['speech'].steps = ['img/speech.png'];
+		animations['speech'].durations = [600000];
 		animations['logo'] = new rtge.Animation();
 		for (var i = 0; i < 9; ++i) {
 			var filename = 'img/logo_'+i+'.png';
@@ -161,14 +165,28 @@ var robots = {
 		rtge.addObject(new robots.Hero(753, 187));
 		document.getElementById('introtext').style.display = 'none';
 		rtge.state.terrain = 'img/background_game.jpg';
-		robots.state = {tick: robots.gameTick, click: robots.gameClick, data: {hero: new robots.Hero(753, 187), board: [0, 0, 0, 0, 0, 0, 0, 0, 0], markers: []}};
+		robots.state = {tick: robots.gameTick, click: robots.gameClick, data: {hero: new robots.Hero(753, 187), board: [0, 0, 0, 0, 0, 0, 0, 0, 0], markers: [], duration: 0, speech: null, tuto_state: 'init'}};
 		rtge.addObject(robots.state.data.hero);
 	},
 
 	gameTick: function(timeDiff) {
+		var state = robots.state.data;
+		state.duration += timeDiff;
+		if (state.tuto_state == 'init' && state.duration > 3000) {
+			state.speech = new robots.Tutorial();
+			rtge.addObject(state.speech);
+			state.tuto_state = 'running';
+		}
 	},
 
 	gameClick: function(x, y) {
+		// Cancel the tutorial (hide it or avoid it to appear later)
+		robots.state.data.tuto_state = 'cancelled';
+		if (robots.state.data.speech !== null) {
+			rtge.removeObject(robots.state.data.speech);
+		}
+
+		// Get selected position
 		var board_index = robots.coordToBoardIndex(x, y);
 		if (robots.state.data.board[board_index] != 0) {
 			return;
@@ -333,5 +351,12 @@ var robots = {
 		this.anchorY = 117;
 		this.x = 960 / 2;
 		this.y = 540 / 2;
+	},
+
+	Tutorial: function() {
+		rtge.DynObject.call(this);
+		this.animation = 'speech'
+		this.x = 550;
+		this.y = 40;
 	},
 };
